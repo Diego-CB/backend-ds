@@ -41,50 +41,56 @@ modelo = tf.keras.saving.load_model('./nlp_model.h5')
 # procesar texto
 
 def procesar_texto(claim:str, texto: str):
-  ''' Necesita el Tokenizador creado arriba '''
+    ''' Necesita el Tokenizador creado arriba '''
 
-  # Tokenizar las frase
-  secuencia = tokenizador.texts_to_sequences(texto)
-  secuencia = np.array(secuencia).T[0]
+    # Tokenizar las frase
+    secuencia = tokenizador.texts_to_sequences(texto)
+    secuencia = np.array(secuencia).T[0]
 
-  # Rellenar (Pad) las secuencias para que tengan la misma longitud
-  to_pad = np.array([[0 for _ in range(846)], secuencia.tolist()], dtype='object')
-  secuencias = pad_sequences(to_pad)
-  secuencia = secuencias[1]
-  tensor_secuencias = tf.stack([secuencia])
-  claim_size = len(texto)
+    # Rellenar (Pad) las secuencias para que tengan la misma longitud
+    to_pad = np.array([[0 for _ in range(846)], secuencia.tolist()], dtype='object')
+    secuencias = pad_sequences(to_pad)
+    secuencia = secuencias[1]
+    tensor_secuencias = tf.stack([secuencia])
+    claim_size = len(texto)
 
-  # Se hace el encoding del tipo de claiim
-  claim_map = {'Lead': 0, 'Position': 1, 'Claim': 2, 'Evidence': 3, 'Counterclaim': 4, 'Rebuttal': 5, 'Concluding Statement': 6}
+    # Se hace el encoding del tipo de claiim
+    claim_map = {'Lead': 0, 'Position': 1, 'Claim': 2, 'Evidence': 3, 'Counterclaim': 4, 'Rebuttal': 5, 'Concluding Statement': 6}
 
-  if claim not in claim_map.keys():
-    raise Exception(f'tipo de argumento \'{claim}\' no aceptado')
+    if claim not in claim_map.keys():
+        raise Exception(f'tipo de argumento \'{claim}\' no aceptado')
 
-  # Preparar inputs para los 2 pipelines
-  encoded_claim = claim_map[claim]
-  X = np.array([[encoded_claim, claim_size]])
+    # Preparar inputs para los 2 pipelines
+    encoded_claim = claim_map[claim]
+    X = np.array([[encoded_claim, claim_size]])
 
-  # Juntar ambos pipeliins
-  input_encoded = [tensor_secuencias, X]
+    # Juntar ambos pipeliins
+    input_encoded = [tensor_secuencias, X]
 
-  return input_encoded
+    return input_encoded
 
 def decode_predict(predict):
-  decode_map = ['Adequate', 'Effective', 'Ineffective']
-  return decode_map[int(predict)]
+    decode_map = ['Adequate', 'Effective', 'Ineffective']
+    return decode_map[int(predict)]
 
 @app.route('/', methods=['GET'])
 def search():
+    print('> entro API')
     args = request.args
 
     tipo_claim  = args.get('tipo')
     texto_claim = args.get('texto')
+    print('> params:', tipo_claim, texto_claim)
 
+    print('> Procesando input')
     input_encoded = procesar_texto(tipo_claim, texto_claim)
+    print('> Predict')
     prediccion = modelo.predict([input_encoded])
+    print('> Decoded predict')
     prediccion_decoded = decode_predict(prediccion)
+    print('> Sending')
 
     return json.dumps({"prediction": prediccion_decoded})
 
 if __name__ == '__main__':
-  app.run()
+    app.run()
