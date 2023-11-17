@@ -23,7 +23,7 @@ file_id = '1zgFGu-WuVzex8jXOTYSnfMpGGVxAQ5pu'
 nombre_archivo = 'model.cpk'
 
 # Verificar si el archivo ya existe
-if verificar_existencia_archivo('./Predictor/' + nombre_archivo):
+if verificar_existencia_archivo('Predictor/' + nombre_archivo) or verificar_existencia_archivo(nombre_archivo):
     print(f'El archivo {nombre_archivo} ya existe.')
 else:
     print(f'Descargando {nombre_archivo}')
