@@ -20,7 +20,7 @@ def verificar_existencia_archivo(nombre_archivo):
 
 # Definir el ID del archivo en Google Drive y el nombre del archivo
 file_id = '1zgFGu-WuVzex8jXOTYSnfMpGGVxAQ5pu'
-nombre_archivo = 'model.cpk'
+nombre_archivo = 'model.ckpt'
 
 # Verificar si el archivo ya existe
 if verificar_existencia_archivo('Predictor/' + nombre_archivo) or verificar_existencia_archivo(nombre_archivo):
@@ -32,7 +32,7 @@ else:
     print(f'Se ha descargado el archivo {nombre_archivo} desde Google Drive.')
 
 try:
-    shutil.move('./model.cpk', './Predictor/model.cpk')
+    shutil.move('./model.cpk', './Predictor/model.ckpt')
 
 except:
     pass
