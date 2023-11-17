@@ -80,6 +80,10 @@ def search():
 
     tipo_claim  = args.get('tipo')
     texto_claim = args.get('texto')
+
+    if None in [tipo_claim, texto_claim]:
+        return json.dumps({"prediction": 'not enough params'})
+
     print('> params:', tipo_claim, texto_claim)
 
     print('> Procesando input')
