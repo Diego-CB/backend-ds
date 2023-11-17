@@ -31,7 +31,11 @@ else:
     descargar_modelo(file_id, nombre_archivo)
     print(f'Se ha descargado el archivo {nombre_archivo} desde Google Drive.')
 
-shutil.move('./model.cpk', './Predictor/model.cpk')
+try:
+    shutil.move('./model.cpk', './Predictor/model.cpk')
+
+except:
+    pass
 
 from autogluon.multimodal import MultiModalPredictor
 predictor = MultiModalPredictor.load('Predictor')
