@@ -9,7 +9,36 @@ from flask import Flask, request
 app = Flask(__name__)
 
 tokenizador = joblib.load('./tokenizador.pkl')
+
+## Descargar modelo
+import os
+import gdown
+
+def descargar_modelo(file_id, nombre_archivo):
+    url = f'https://drive.google.com/uc?id={file_id}'
+    output = nombre_archivo
+    gdown.download(url, output, quiet=False)
+
+def verificar_existencia_archivo(nombre_archivo):
+    return os.path.isfile(nombre_archivo)
+
+# Definir el ID del archivo en Google Drive y el nombre del archivo
+file_id = '19R31Yz132zyAdNVO9gW0KvjEvXqsjut5'
+nombre_archivo = 'nlp_model.h5'
+
+# Verificar si el archivo ya existe
+if verificar_existencia_archivo(nombre_archivo):
+    print(f'El archivo {nombre_archivo} ya existe.')
+else:
+    print(f'Descargando {nombre_archivo}')
+    # Descargar el archivo desde Google Drive
+    descargar_modelo(file_id, nombre_archivo)
+    print(f'Se ha descargado el archivo {nombre_archivo} desde Google Drive.')
+
+
 modelo = tf.keras.saving.load_model('./nlp_model.h5')
+
+# procesar texto
 
 def procesar_texto(claim:str, texto: str):
   ''' Necesita el Tokenizador creado arriba '''
