@@ -4,9 +4,11 @@ from tensorflow.keras.preprocessing.sequence import pad_sequences
 import numpy as np
 import joblib
 import json
+from flask_cors import CORS
 
 from flask import Flask, request
 app = Flask(__name__)
+CORS(app)
 
 tokenizador = joblib.load('./tokenizador.pkl')
 
