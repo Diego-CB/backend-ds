@@ -74,6 +74,10 @@ def decode_predict(predict):
     return decode_map[int(predict)]
 
 @app.route('/', methods=['GET'])
+def home():
+    return json.dumps({"Server": 'Running'})
+
+@app.route('/predict', methods=['GET'])
 def search():
     print('> entro API')
     args = request.args
