@@ -81,26 +81,42 @@ def home():
 
 @app.route('/predict', methods=['GET'])
 def search():
-    print('> entro API')
-    args = request.args
+    try:
+        print('> entro API')
+        args = request.args
 
-    tipo_claim  = args.get('tipo')
-    texto_claim = args.get('texto')
+        tipo_claim  = args.get('tipo')
+        texto_claim = args.get('texto')
 
-    if None in [tipo_claim, texto_claim]:
-        return json.dumps({"prediction": 'not enough params'})
+        if None in [tipo_claim, texto_claim]:
+            return json.dumps({"prediction": 'not enough params'})
 
-    print('> params:', tipo_claim, texto_claim)
+        print('> params:', tipo_claim, texto_claim)
 
-    print('> Procesando input')
-    input_encoded = procesar_texto(tipo_claim, texto_claim)
-    print('> Predict')
-    prediccion = modelo.predict([input_encoded])
-    print('> Decoded predict')
-    prediccion_decoded = decode_predict(prediccion)
-    print('> Sending')
+        print('> Procesando input')
+        input_encoded = procesar_texto(tipo_claim, texto_claim)
+        print('> Predict')
+        prediccion = modelo.predict([input_encoded])
+        print('> Decoded predict')
+        prediccion_decoded = decode_predict(prediccion)
+        print('> Sending')
 
-    return json.dumps({"prediction": prediccion_decoded})
+        adequate = '1' if prediccion_decoded == 'Adequate' else '0'
+        Effective = '1' if prediccion_decoded == 'Effective' else '0'
+        Ineffective = '1' if prediccion_decoded == 'Ineffective' else '0'
+
+        return json.dumps({
+            'Adequate': adequate,
+            'Effective': Effective,
+            'Ineffective': Ineffective,
+        })
+    except:
+        return json.dumps({
+            'Adequate': 0,
+            'Effective': 0,
+            'Ineffective': 1,
+        })
+
 
 if __name__ == '__main__':
-    app.run()
+    app.run(port=5001)
