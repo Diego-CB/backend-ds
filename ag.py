@@ -62,14 +62,22 @@ def search():
         'discourse_type': [tipo_claim],
         'claim_size': [len(texto_claim)],
     }
+    print(data_predict)
 
     data_predict = pd.DataFrame(data_predict)
-    probs = predictor.predict_proba(data_predict)[0]
+    print(data_predict)
+    probs = predictor.predict_proba(data_predict)
+    print('-----------------------')
+    print(probs)
+    print('-----------------------')
+    print(probs['Adequate'].values)
+    print(probs['Effective'].values)
+    print(probs['Ineffective'].values)
 
     return json.dumps({
-        'Adequate': probs[0],
-        'Effective': probs[1],
-        'Ineffective': probs[2],
+        'Adequate': str(probs['Adequate'].values[0]),
+        'Effective': str(probs['Effective'].values[0]),
+        'Ineffective': str(probs['Ineffective'].values[0]),
     })
 
 if __name__ == '__main__':
